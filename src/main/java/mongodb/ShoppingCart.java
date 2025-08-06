@@ -11,7 +11,10 @@ import java.util.Map.Entry;
  * If you need more classes, simply define them inline.
  *
  * Question:
- * Design and implement a Shopping Cart Checkout Service that calculates the total amount a customer must pay at checkout. A product type can be configured by an Admin to have a promotion beforehand. During checkout, the service should automatically apply the applicable promotions based on the customer’s cart contents when conditions are met. Promotions can be applied multiple times.
+ * Design and implement a Shopping Cart Checkout Service that calculates the total amount a customer must pay at checkout.
+ * A product type can be configured by an Admin to have a promotion beforehand.
+ *  During checkout, the service should automatically apply the applicable promotions based on the customer’s cart contents when conditions are met.
+ *  Promotions can be applied multiple times.
 
 The service must return the following information:
 
@@ -72,37 +75,29 @@ class PromotionService {
 }
 
 abstract class PromotionHandler {
-    protected Integer applicableAmount;
-    protected Integer percentageDiscount;
-
-    PromotionHandler(Integer applicableAmount, Integer percentageDiscount) {
-        this.applicableAmount = applicableAmount;
-        this.percentageDiscount = percentageDiscount;
-    }
-
-    public double applyPromotion(Product product, Integer amount) {
-        Integer productToApplyPromotion = amount / applicableAmount;
-        // percentageDiscount // calculate the %
-        return product.getPrice() * percentageDiscount / 100 * productToApplyPromotion;
-    }
+    abstract double applyPromotion(Product product, Integer amount);
 }
 
 class Buy4Get1HalfThePrice extends PromotionHandler {
-    Buy4Get1HalfThePrice() {
-        super(5, 50);
+    public double applyPromotion(Product product, Integer amount) {
+        Integer productToApplyPromotion = amount / 5;
+        // percentageDiscount // calculate the %
+        return product.getPrice() * 50 * productToApplyPromotion;
     }
 }
 
 class Buy2Get1Free extends PromotionHandler {
-    Buy2Get1Free() {
-        super(3, 100);
+    public double applyPromotion(Product product, Integer amount) {
+        Integer productToApplyPromotion = amount / 3;
+        // percentageDiscount // calculate the %
+        return product.getPrice() * productToApplyPromotion;
     }
 }
 
 class ShoppingCartTotal {
-    public double subtotal;
-    public double promotionsApplied;
-    public double totalAmount;
+    private double subtotal;
+    private double promotionsApplied;
+    private double totalAmount;
 
     public ShoppingCartTotal(
         double subtotal,
@@ -112,6 +107,18 @@ class ShoppingCartTotal {
         this.subtotal = subtotal;
         this.promotionsApplied = promotionsApplied;
         this.totalAmount = totalAmount;
+    }
+
+    public double getSubtotal() {
+        return subtotal;
+    }
+
+    public double getPromotionsApplied() {
+        return promotionsApplied;
+    }
+
+    public double getTotalAmount() {
+        return totalAmount;
     }
 }
 
@@ -129,9 +136,9 @@ class Solution {
         shoppingCart.addToCart(Product.BANANAS, 0);
 
         ShoppingCartTotal total = calculateShoppingCartTotal(shoppingCart, promotionService);
-        System.out.println("subtotal :" + total.subtotal);
-        System.out.println("promotionApplied :" + total.promotionsApplied);
-        System.out.println("totalAmount :" + total.totalAmount);
+        System.out.println("subtotal :" + total.getSubtotal());
+        System.out.println("promotionApplied :" + total.getPromotionsApplied());
+        System.out.println("totalAmount :" + total.getTotalAmount());
     }
 
     static ShoppingCartTotal calculateShoppingCartTotal(
